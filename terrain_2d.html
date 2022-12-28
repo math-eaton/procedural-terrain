@@ -1,0 +1,51 @@
+ <!-- code adapted from Kai Junge
+ Osaka International School -->
+ 
+ <html>
+ <h1>2D terrain generator</h1>
+ <input type="search" id="input" onsearch="proceed_fractal()">
+ <p> enter a value between 0 and 10 </p>
+ <body>
+ <canvas id="myCanvas" width="1025" height="600" style="border:1px solid
+ #000000;">
+ //style=background-color
+ </canvas>
+ <script>
+ var canvas = document.getElementById("myCanvas"); //load the canvas
+ var ctx = canvas.getContext("2d"); // make the canvas ediable
+ var size = Math.pow(2,10)+1;
+ var left_point = [1,100];
+ var right_point = [size,100];
+ var iteration;
+function terrain(left,right,N,color)
+{
+if(N == iteration)
+{
+// draw a line from the left to the right
+ctx.beginPath();
+ctx.moveTo(left[0],left[1]);
+ctx.lineTo(right[0],right[1]);
+ctx.strokeStyle = color;
+ctx.stroke();
+ctx.closePath();
+}
+else{
+var displacement = (right[0]-
+left[0])*(Math.cos(Math.random()*Math.PI))*0.2;
+var midpoint = [(left[0]+right[0])/2,
+((left[1]+right[1])/2)+displacement];
+terrain(left,midpoint,N+1,color);
+terrain(midpoint,right,N+1,color);
+}
+}
+34
+function proceed_fractal()
+{
+ctx.clearRect(0,0,innerWidth,innerHeight);
+iteration = document.getElementById("input").value;
+terrain([1,left_point[1]+150],
+[size,right_point[1]+150],0,"#000000");
+}
+ </script>
+ </body>
+</html>
