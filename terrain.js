@@ -7,6 +7,9 @@ new p5((p) => {
   let w, h; // Width and height of the terrain
   let buffer; // Buffer percentage
   let terrain = [];
+  let noiseOffsetX = 0;
+  let noiseOffsetY = 0;
+  let noiseChangeSpeed = 0.02; // Speed at which the terrain changes
 
   function generateTerrain() {
     scl = 10; // Adjust scale if needed
@@ -20,10 +23,11 @@ new p5((p) => {
     for (let x = 0; x < cols; x++) {
       terrain[x] = [];
       for (let y = 0; y < rows; y++) {
-        terrain[x][y] = p.map(p.noise(x * 0.1, y * 0.1), 0, 1, -100, 100);
+        terrain[x][y] = p.map(p.noise(x * 0.1 + noiseOffsetX, y * 0.1 + noiseOffsetY), 0, 1, -100, 100);
       }
     }
   }
+
 
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
@@ -33,6 +37,11 @@ new p5((p) => {
 
   p.draw = () => {
     p.background(0);
+
+    // Update terrain with new noise offsets
+    generateTerrain();
+    noiseOffsetX += noiseChangeSpeed;
+    noiseOffsetY += noiseChangeSpeed;
 
     // Centering the terrain on the canvas
     p.translate(-w / 2, -h / 2);
