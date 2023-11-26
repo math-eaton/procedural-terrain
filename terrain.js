@@ -2,7 +2,6 @@ import p5 from 'p5';
 import '/style.css'; 
 
 new p5((p) => {
-  let cam;
   let cols, rows;
   let scl; // Scale of each cell in the grid
   let w, h; // Width and height of the terrain
@@ -14,11 +13,12 @@ new p5((p) => {
   let thresh = 15;
   let useCA = false; // false for Perlin noise, true for CA
   let xRotation = 0; // Rotation around the X-axis
-  let rotateXAxis = false; // Flag to control rotation
+  let zRotation = 0; // Rotation around the Y-axis
+  let rotateXAxis, rotateZAxis = false; // Flag to control rotation
 
 
   function generateTerrain() {
-    scl = 12; // Adjust scale if needed
+    scl = 8; // Adjust scale 
     buffer = 0.1; // N% buffer
     w = p.windowWidth * (1 - 2 * buffer); // Adjust for buffer
     h = p.windowHeight * (1 - 2 * buffer); // Adjust for buffer
@@ -54,11 +54,20 @@ new p5((p) => {
     if (p.key === 'r' || p.key === 'R') {
       rotateXAxis = !rotateXAxis; // Toggle X-axis rotation
     }  
+    if (p.key === 't' || p.key === 'T') {
+      rotateZAxis = !rotateZAxis; // Toggle X-axis rotation
+    }  
     if (p.keyCode === p.UP_ARROW) {
       xRotation -= 0.2; // Rotate up
     } else if (p.keyCode === p.DOWN_ARROW) {
       xRotation += 0.2; // Rotate down
     }
+    if (p.keyCode === p.LEFT_ARROW) {
+      zRotation -= 0.2; // Rotate up
+    } else if (p.keyCode === p.RIGHT_ARROW) {
+      zRotation += 0.2; // Rotate down
+    }
+
     
   };
 
@@ -104,7 +113,11 @@ new p5((p) => {
     p.background(0);
     p.rotateX(xRotation);
     if (rotateXAxis) {
-      xRotation += 0.01; // Increment rotation
+      xRotation += 0.005; // Increment rotation
+    }
+    p.rotateZ(zRotation);
+    if (rotateZAxis) {
+      zRotation += 0.005; // Increment rotation
     }
     
     // Update terrain with new noise offsets
@@ -135,7 +148,9 @@ new p5((p) => {
       p.beginShape(p.QUAD_STRIP);
       for (let x = 0; x < cols; x++) {
         let elevation = terrain[x][y];
-        p.stroke(p.map(elevation, 45, 90, 270, 360), 60, 65);
+        let greyValue = p.map(elevation, -70, 250, 0, 255);
+        p.stroke(greyValue); // Set the stroke to a shade of grey
+        // p.stroke(p.map(elevation, 45, 90, 270, 360), 60, 65);
         p.noFill();
         p.vertex(x * scl, y * scl, elevation);
         p.vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
