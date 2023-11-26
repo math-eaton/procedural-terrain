@@ -2,6 +2,7 @@ import p5 from 'p5';
 import '/style.css'; 
 
 new p5((p) => {
+  let cam;
   let cols, rows;
   let scl; // Scale of each cell in the grid
   let w, h; // Width and height of the terrain
@@ -12,6 +13,8 @@ new p5((p) => {
   let noiseChangeSpeed = 0.005; // Speed at which the terrain changes
   let thresh = 15;
   let useCA = false; // false for Perlin noise, true for CA
+  let xRotation = 0; // Rotation around the X-axis
+  let rotateXAxis = false; // Flag to control rotation
 
 
   function generateTerrain() {
@@ -48,6 +51,15 @@ new p5((p) => {
       console.log(useCA)
       generateTerrain(); // Regenerate terrain with the new method
     }
+    if (p.key === 'r' || p.key === 'R') {
+      rotateXAxis = !rotateXAxis; // Toggle X-axis rotation
+    }  
+    if (p.keyCode === p.UP_ARROW) {
+      xRotation -= 0.2; // Rotate up
+    } else if (p.keyCode === p.DOWN_ARROW) {
+      xRotation += 0.2; // Rotate down
+    }
+    
   };
 
 
@@ -81,12 +93,20 @@ new p5((p) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL);
     generateTerrain();
+    console.log("generate")
     p.colorMode(p.HSB);
+    // Set up orthographic projection
+    p.ortho(-p.width / 2, p.width / 2, -p.height / 2, p.height / 2, 0, 500);
+    p.redraw(); // Force an immediate redraw after setup
   };
 
   p.draw = () => {
     p.background(0);
-
+    p.rotateX(xRotation);
+    if (rotateXAxis) {
+      xRotation += 0.01; // Increment rotation
+    }
+    
     // Update terrain with new noise offsets
     generateTerrain();
     noiseOffsetX += noiseChangeSpeed;
@@ -115,7 +135,7 @@ new p5((p) => {
       p.beginShape(p.QUAD_STRIP);
       for (let x = 0; x < cols; x++) {
         let elevation = terrain[x][y];
-        p.stroke(p.map(elevation, 45, 90, 270, 360), 60, 55);
+        p.stroke(p.map(elevation, 45, 90, 270, 360), 60, 65);
         p.noFill();
         p.vertex(x * scl, y * scl, elevation);
         p.vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
