@@ -7,16 +7,16 @@ new p5((p) => {
   let w, h; // Width and height of the terrain
   let buffer; // Buffer percentage
   let terrain = [];
-  let noiseOffsetX = 0;
-  let noiseOffsetY = 0;
-  let noiseChangeSpeed = 0.01; // Speed at which the terrain changes
+  let noiseOffsetX = 180;
+  let noiseOffsetY = 90;
+  let noiseChangeSpeed = 0.005; // Speed at which the terrain changes
   let thresh = 15;
   let useCA = false; // false for Perlin noise, true for CA
 
 
   function generateTerrain() {
-    scl = 18; // Adjust scale if needed
-    buffer = 0.05; // 5% buffer
+    scl = 12; // Adjust scale if needed
+    buffer = 0.1; // N% buffer
     w = p.windowWidth * (1 - 2 * buffer); // Adjust for buffer
     h = p.windowHeight * (1 - 2 * buffer); // Adjust for buffer
     cols = Math.floor(w / scl);
@@ -98,7 +98,7 @@ new p5((p) => {
     // Choose one of the methods by uncommenting it:
 
     // option 1. Draw the terrain using TRIANGLE_STRIP
-    drawTerrainTriangles();
+    drawTerrainGrid();
 
     // option 2. Draw the terrain using a grid of lines
     // drawTerrainGrid();
@@ -110,12 +110,12 @@ new p5((p) => {
       // drawTerrainGridFill();
   };
 
-  function drawTerrainTriangles() {
+  function drawTerrainGrid() {
     for (let y = 0; y < rows - 1; y++) {
       p.beginShape(p.QUAD_STRIP);
       for (let x = 0; x < cols; x++) {
         let elevation = terrain[x][y];
-        p.stroke(p.map(elevation, -100, 100, 0, 360), 100, 100);
+        p.stroke(p.map(elevation, 45, 90, 270, 360), 60, 55);
         p.noFill();
         p.vertex(x * scl, y * scl, elevation);
         p.vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
@@ -125,17 +125,20 @@ new p5((p) => {
   }
 
   function drawTerrainGridFill() {
-    for (let y = 0; y < rows; y++) {
+    for (let y = 0; y < rows - 1; y++) {
+      p.beginShape(p.QUAD_STRIP);
       for (let x = 0; x < cols; x++) {
         let elevation = terrain[x][y];
-        p.fill(p.map(elevation, -100, 100, 0, 360), 100, 100);
-        p.stroke(0.5);
-        p.rect(x * scl, y * scl, scl, scl); // Rectangle representing elevation
+        p.stroke(p.map(elevation, 45, 90, 270, 360), 60, -45);
+        p.fill(p.map(elevation, 45, 90, 270, 360), 60, 45);
+        p.vertex(x * scl, y * scl, elevation);
+        p.vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
       }
+      p.endShape();
     }
   }
 
-  function drawTerrainGrid() {
+  function drawTerrainGridFlat() {
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         let elevation = terrain[x][y];
