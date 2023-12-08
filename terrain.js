@@ -9,8 +9,8 @@ new p5((p) => {
   let terrain = [];
   let noiseOffsetX = 180;
   let noiseOffsetY = 90;
-  let noiseChangeSpeed = 0.005; // Speed at which the terrain changes
-  let thresh = 15;
+  let noiseChangeSpeed = 0.003; // Speed at which the terrain changes
+  let thresh = 150;
   let useCA = false; // false for Perlin noise, true for CA
   let xRotation = 0; // Rotation around the X-axis
   let zRotation = 0; // Rotation around the Y-axis
@@ -18,8 +18,8 @@ new p5((p) => {
 
 
   function generateTerrain() {
-    scl = 8; // Adjust scale 
-    buffer = 0.1; // N% buffer
+    scl = 15; // Adjust scale 
+    buffer = 0.03; // N% buffer
     w = p.windowWidth * (1 - 2 * buffer); // Adjust for buffer
     h = p.windowHeight * (1 - 2 * buffer); // Adjust for buffer
     cols = Math.floor(w / scl);
@@ -31,7 +31,7 @@ new p5((p) => {
       terrain[x] = [];
       for (let y = 0; y < rows; y++) {
         // Use Perlin noise or some other initial value
-        terrain[x][y] = p.map(p.noise(x * 0.1 + noiseOffsetX, y * 0.1 + noiseOffsetY), 0, 1, -100, 100);
+        terrain[x][y] = p.map(p.noise(x * 0.1 + noiseOffsetX, y * 0.1 + noiseOffsetY), 0, 1, -10000, 10000);
       }
     }
   
@@ -58,14 +58,14 @@ new p5((p) => {
       rotateZAxis = !rotateZAxis; // Toggle X-axis rotation
     }  
     if (p.keyCode === p.UP_ARROW) {
-      xRotation -= 0.2; // Rotate up
+      xRotation -= 0.02; // Rotate up
     } else if (p.keyCode === p.DOWN_ARROW) {
-      xRotation += 0.2; // Rotate down
+      xRotation += 0.02; // Rotate down
     }
     if (p.keyCode === p.LEFT_ARROW) {
-      zRotation -= 0.2; // Rotate up
+      zRotation -= 0.02; // Rotate up
     } else if (p.keyCode === p.RIGHT_ARROW) {
-      zRotation += 0.2; // Rotate down
+      zRotation += 0.02; // Rotate down
     }
 
     
@@ -131,7 +131,7 @@ new p5((p) => {
     // Choose one of the methods by uncommenting it:
 
     // option 1. Draw the terrain using TRIANGLE_STRIP
-    drawTerrainGrid();
+    // drawTerrainGrid();
 
     // option 2. Draw the terrain using a grid of lines
     // drawTerrainGrid();
@@ -140,7 +140,7 @@ new p5((p) => {
     // drawTerrainContours();
 
     // option 4. Draw the grid with fill raster cells
-      // drawTerrainGridFill();
+      drawTerrainGridFill();
   };
 
   function drawTerrainGrid() {
